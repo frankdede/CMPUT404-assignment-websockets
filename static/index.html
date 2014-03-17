@@ -6,7 +6,7 @@
     <meta content='width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     <meta name="license" content="
-        Copyright 2013 Google, Abram Hindle
+        Copyright 2013 Google, Abram Hindle, Guanqi Huang
         
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ var W = canvas.width  = window.innerWidth-6;
 var H = canvas.height = window.innerHeight-50;
 var wscounter = 0;
 var socket;
+var colors = {0:'yellow',1:'red',2:'purple'};
 
 function debug(str) {
     var debugDiv = document.getElementById('debug');
     debugDiv.innerHTML = "" + str;
 }
-debug("Test");
 
 world = {};
 
@@ -240,8 +240,8 @@ mouse.mouseuppers.push(function(x,y,clicked,e) {
 });
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'green',
-                          'radius':10});
+    var rad = (Math.floor(20000000*Math.random()))%3;
+    addEntityWithoutName({'x':x,'y':y,'colour':colors[rad],'radius':10});
 });
 
 function sendJSONXMLHTTPRequest(url, objects, callback) {
@@ -289,7 +289,6 @@ function wsSetup() {
         //XXX: TODO What are you going to do here?
         sendJSONXMLHTTPRequest('/world', null, function(data){
             world = data;
-            console.log(JSON.stringify(world));
         });
     };
     socket.onerror = function(msg) {
@@ -297,7 +296,6 @@ function wsSetup() {
     };
     socket.onmessage = function(msg) {  
         try {
-            debug("WebSocket Recv:" + msg.data);
             //XXX: TODO What are you going to do here?
             var item = JSON.parse(msg.data);
             world[item['entity']] = item['data'];          
